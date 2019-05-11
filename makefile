@@ -1,5 +1,5 @@
 PROTOC = protoc
-GO_PROTO_BUILD = ${PROTOC} -I../../../ -I.  --micro_out=. --go_out=.
+GO_PROTO_BUILD = ${PROTOC} -I../../../ -I.  --micro_out=. --go_out=plugins=grpc:.
 
 all: build
 

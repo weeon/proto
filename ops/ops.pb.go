@@ -7,6 +7,11 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+import (
+	context "golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
+)
+
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
@@ -218,6 +223,111 @@ func init() {
 	proto.RegisterType((*DeployRequest)(nil), "ops.DeployRequest")
 	proto.RegisterType((*DeployResponse)(nil), "ops.DeployResponse")
 	proto.RegisterEnum("ops.DeployResult", DeployResult_name, DeployResult_value)
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// OpsSrvClient is the client API for OpsSrv service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type OpsSrvClient interface {
+	Ping(ctx context.Context, in *PingMessage, opts ...grpc.CallOption) (*PongMessage, error)
+	Deploy(ctx context.Context, in *DeployRequest, opts ...grpc.CallOption) (*DeployResponse, error)
+}
+
+type opsSrvClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewOpsSrvClient(cc *grpc.ClientConn) OpsSrvClient {
+	return &opsSrvClient{cc}
+}
+
+func (c *opsSrvClient) Ping(ctx context.Context, in *PingMessage, opts ...grpc.CallOption) (*PongMessage, error) {
+	out := new(PongMessage)
+	err := c.cc.Invoke(ctx, "/ops.OpsSrv/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *opsSrvClient) Deploy(ctx context.Context, in *DeployRequest, opts ...grpc.CallOption) (*DeployResponse, error) {
+	out := new(DeployResponse)
+	err := c.cc.Invoke(ctx, "/ops.OpsSrv/Deploy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OpsSrvServer is the server API for OpsSrv service.
+type OpsSrvServer interface {
+	Ping(context.Context, *PingMessage) (*PongMessage, error)
+	Deploy(context.Context, *DeployRequest) (*DeployResponse, error)
+}
+
+func RegisterOpsSrvServer(s *grpc.Server, srv OpsSrvServer) {
+	s.RegisterService(&_OpsSrv_serviceDesc, srv)
+}
+
+func _OpsSrv_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PingMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpsSrvServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ops.OpsSrv/Ping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpsSrvServer).Ping(ctx, req.(*PingMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpsSrv_Deploy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeployRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpsSrvServer).Deploy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ops.OpsSrv/Deploy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpsSrvServer).Deploy(ctx, req.(*DeployRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _OpsSrv_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "ops.OpsSrv",
+	HandlerType: (*OpsSrvServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Ping",
+			Handler:    _OpsSrv_Ping_Handler,
+		},
+		{
+			MethodName: "Deploy",
+			Handler:    _OpsSrv_Deploy_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "ops/ops.proto",
 }
 
 func init() { proto.RegisterFile("ops/ops.proto", fileDescriptor_ops_245907ece4d34e90) }
