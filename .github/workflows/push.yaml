@@ -1,5 +1,8 @@
-name: buf-pull-request
-on: pull_request
+name: buf-push
+on:
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -9,5 +12,5 @@ jobs:
       - uses: bufbuild/buf-lint-action@v1
       - uses: bufbuild/buf-breaking-action@v1
         with:
-          # The 'main' branch of the GitHub repository that defines the module.
-          against: "https://github.com/${GITHUB_REPOSITORY}.git#branch=main"
+          # The 'master' branch of the GitHub repository that defines the module.
+          against: "https://github.com/${GITHUB_REPOSITORY}.git#branch=master,ref=HEAD~1"
